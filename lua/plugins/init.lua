@@ -1,0 +1,7 @@
+require('plugins.colorscheme').setup()
+require('plugins.lualine').setup()
+require('plugins.treesitter').setup()
+require('plugins.telescope').setup()
+require('plugins.cmp').setup()
+require('Comment').setup()
+require('ibl').setup()
