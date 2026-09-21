@@ -1,5 +1,4 @@
 # nix/module.nix
-{ self }:
 {
   pkgs,
   wlib,
@@ -12,7 +11,7 @@
   specs.general = import ./plugins.nix pkgs;
   runtimePkgs = import ./runtime-pkgs.nix pkgs;
 
-  settings.config_directory = self;
+  settings.config_directory = ../.;
 
   settings.aliases = [
     "vi"
