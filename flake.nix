@@ -28,8 +28,8 @@
         in
         {
           default = nix-wrapper-modules.lib.evalPackage [
-            (import ./nix/module.nix)
-            { inherit pkgs self; }
+            (import ./nix/module.nix { inherit self; })
+            { inherit pkgs; }
           ];
         }
       );

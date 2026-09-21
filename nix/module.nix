@@ -1,7 +1,7 @@
 # nix/module.nix
+{ self }:
 {
   pkgs,
-  self,
   wlib,
   ...
 }:
@@ -13,6 +13,7 @@
   runtimePkgs = import ./runtime-pkgs.nix pkgs;
 
   settings.config_directory = self;
+
   settings.aliases = [
     "vi"
     "vim"
