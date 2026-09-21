@@ -7,6 +7,8 @@ pkgs: with pkgs; [
   nil
   statix
 
+  nixfmt
+
   wl-clipboard
 
   vhdl-ls
