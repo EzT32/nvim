@@ -8,30 +8,26 @@
       url = "github:nix-community/nix-wrapper-modules";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    flake-parts = {
+      url = "github:hercules-ci/flake-parts";
+      inputs.nixpkgs-lib.follows = "nixpkgs";
+    };
+
   };
 
   outputs =
-    {
-      self,
-      nixpkgs,
-      nix-wrapper-modules,
-    }:
-    let
+    inputs:
+    inputs.flake-parts.lib.mkFlake { inherit inputs; } {
       systems = [ "x86_64-linux" ];
-      forAllSystems = nixpkgs.lib.genAttrs systems;
-    in
-    {
-      packages = forAllSystems (
-        system:
-        let
-          pkgs = nixpkgs.legacyPackages.${system};
-        in
-        {
-          default = nix-wrapper-modules.lib.evalPackage [
-            (import ./nix/module.nix)
-            { inherit pkgs; }
-          ];
-        }
-      );
+
+      imports = [
+        inputs.nix-wrapper-modules.flakeModules.wrappers
+        ./nix/module.nix
+      ];
+
+      perSystem = { pkgs, self', ... }: {
+        packages.default = self'.packages.nvim;
+      };
     };
 }
