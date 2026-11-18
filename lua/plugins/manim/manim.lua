@@ -17,6 +17,9 @@ local function render(quality)
 	term_buf = vim.api.nvim_get_current_buf()
 	vim.fn.jobstart({ "manim", "-p", "-q" .. quality, file, scene }, { term = true })
 	vim.cmd.wincmd("p")
+	vim.schedule(function()
+		vim.cmd.stopinsert()
+	end)
 end
 
 function M.setup()
@@ -28,10 +31,12 @@ function M.setup()
 				return
 			end
 			local function map(lhs, q, desc)
-				vim.keymap.set("n", lhs, function() render(q) end, { buffer = ev.buf, desc = "Manim: " .. desc })
+				vim.keymap.set("n", lhs, function()
+					render(q)
+				end, { buffer = ev.buf, desc = "Manim: " .. desc })
 			end
-			map("<leader>mr", "l", "render preview (480p)")
-			map("<leader>mR", "h", "render final (1080p)")
+			map("<leader>m", "l", "render preview (480p)")
+			map("<leader>M", "h", "render final (1080p)")
 		end,
 	})
 end
