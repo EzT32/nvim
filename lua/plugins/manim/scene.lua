@@ -19,4 +19,18 @@ function M.block()
 	end
 	local indent = lines[start]:match("^(%s*)#")
 	if not indent then
-		return {
+		return { vim.api.nvim_get_current_line() }
+	end
+
+	local stop = start
+	for l = start + 1, #lines do
+		local ind = lines[l]:match("^(%s*)%S")
+		if ind and (#ind < #indent or (#ind == #indent and lines[l]:match("^%s*#"))) then
+			break
+		end
+		stop = l
+	end
+	return vim.list_slice(lines, start, stop)
+end
+
+return M
