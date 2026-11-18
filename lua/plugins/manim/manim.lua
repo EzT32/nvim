@@ -56,7 +56,7 @@ local function interactive()
 	if not file then
 		return
 	end
-	run_in_term({ "manim", "-p", "--renderer=opengl", file, scene })
+	run_in_term({ "manim", "--renderer=opengl", "-l", file, scene })
 end
 
 function M.setup()
