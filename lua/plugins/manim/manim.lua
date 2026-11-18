@@ -1,7 +1,7 @@
 local M = {}
 
 local function keymaps(buf)
-	local session, scene = require("plugins.manim.session"), require("manim.scene")
+	local session, scene = require("plugins.manim.session"), require("plugins.manim.scene")
 	local function map(mode, lhs, rhs, desc)
 		vim.keymap.set(mode, lhs, rhs, { buffer = buf, desc = "Manim: " .. desc })
 	end
