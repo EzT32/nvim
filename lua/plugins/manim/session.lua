@@ -2,7 +2,7 @@ local M = {}
 local chan
 
 function M.start()
-	local scene = require("manim.scene").name()
+	local scene = require("plugins.manim.scene").name()
 	if not scene then
 		return vim.notify("manim: cursor is not inside a class", vim.log.levels.WARN)
 	end
