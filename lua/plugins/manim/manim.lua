@@ -1,20 +1,22 @@
+-- lua/plugins/manim/manim.lua
 local M = {}
+local term_buf
 
-local function keymaps(buf)
-	local session, scene = require("plugins.manim.session"), require("plugins.manim.scene")
-	local function map(mode, lhs, rhs, desc)
-		vim.keymap.set(mode, lhs, rhs, { buffer = buf, desc = "Manim: " .. desc })
+local function render(quality)
+	local scene = require("plugins.manim.scene").name()
+	if not scene then
+		return vim.notify("manim: cursor is not inside a class", vim.log.levels.WARN)
 	end
+	vim.cmd.write()
+	local file = vim.api.nvim_buf_get_name(0)
 
-	map("n", "<leader>ms", session.start, "start at cursor")
-	map("n", "<leader>mp", function() session.run(scene.block()) end, "run block")
-	map("x", "<leader>mp", function()
-		local lines = vim.fn.getregion(vim.fn.getpos("v"), vim.fn.getpos("."), { type = "V" })
-		vim.api.nvim_feedkeys(vim.keycode("<Esc>"), "n", false)
-		session.run(lines)
-	end, "run selection")
-	map("n", "<leader>mR", function() session.send("reload()") end, "reload file")
-	map("n", "<leader>mq", function() session.send("exit()") end, "quit")
+	if term_buf and vim.api.nvim_buf_is_valid(term_buf) then
+		vim.api.nvim_buf_delete(term_buf, { force = true })
+	end
+	vim.cmd("botright 12new")
+	term_buf = vim.api.nvim_get_current_buf()
+	vim.fn.jobstart({ "manim", "-p", "-q" .. quality, file, scene }, { term = true })
+	vim.cmd.wincmd("p")
 end
 
 function M.setup()
@@ -22,9 +24,14 @@ function M.setup()
 		pattern = "python",
 		callback = function(ev)
 			local head = table.concat(vim.api.nvim_buf_get_lines(ev.buf, 0, 20, false), "\n")
-			if head:find("manimlib") then
-				keymaps(ev.buf)
+			if not head:find("from manim import") then
+				return
 			end
+			local function map(lhs, q, desc)
+				vim.keymap.set("n", lhs, function() render(q) end, { buffer = ev.buf, desc = "Manim: " .. desc })
+			end
+			map("<leader>mr", "l", "render preview (480p)")
+			map("<leader>mR", "h", "render final (1080p)")
 		end,
 	})
 end
